@@ -1,7 +1,7 @@
 angular.module('sms').controller('defaultController', [
 	'$scope',
 	'smsService',
-	'mockSmsServer', // change this to send sms to different servers
+	'httpSmsServer', // change this to send sms to different servers
 	'$ionicScrollDelegate',
 
 	function($scope, smsService, smsServer, $ionicScrollDelegate) {
@@ -61,15 +61,16 @@ angular.module('sms').controller('defaultController', [
   }
 ])
 
-.factory('exampleHttpServer', ['$http', 
+.factory('httpSmsServer', ['$http', 
 
 	function($http){
 		return {
 			sendSms : function(sms, responseCB) {
-
-		      	$http.get('/someUrl').success(function(data, status, headers, config) {
+		      	$http.post('http://localhost:5000/' + sms.sender, sms).success(function(data, status, headers, config) {
 					responseCB(data)
-				})
+				}).error(function(data, status, headers, config) {
+				    console.log(data)
+				});
 		    }
 	    }
 	}

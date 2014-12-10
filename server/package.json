@@ -1,0 +1,13 @@
+{
+  "name": "jscottnzMockSmsGateway",
+  "version": "1.0.0",
+  "description": "Mock SMS Gateway",
+  "dependencies": {
+    "body-parser": "^1.10.0",
+    "cors": "^2.5.2",
+    "db4js": "git://github.com/jscottnz/db4js.git#d9c1889",
+    "q": "^1.1.2",
+    "shutdown-handler": "^1.0.0"
+  },
+  "devDependencies": {}
+}
