@@ -54,7 +54,7 @@ router.get("/:id", function(request, response) {
 			var saveData = data.indexItems[0][0];
 			var sms = data.indexItems[0][0].queue.shift();
 
-			smsDb.save(request.params.id, saveData)
+			smsDb.save(request.params.id, saveData, true)
 		}
 
 

@@ -3,24 +3,19 @@ angular.module('sms').controller('defaultController', [
 	'smsService',
 	'httpSmsServer', // change this to send sms to different servers
 	'$ionicScrollDelegate',
+	'$interval',
 
-	function($scope, smsService, smsServer, $ionicScrollDelegate) {
-		$scope.setup = {
-			appTitle : "Default Test App",
-			serviceDescriptionTitle : "How to use service",
-			serviceDescriptionBody : "Send an SMS and we'll send a reply",
-
-			user : {
-				phoneNumber : "+15555555555"
-			}		
-		}
-
+	function($scope, smsService, smsServer, $ionicScrollDelegate, $interval) {
+		
+		$scope.smsTo = ""
+		$scope.smsFrom = ""
 		$scope.smsText = ""
 		$scope.smsList = []
 
 		sendSms = function(phonenumber, text) {
 			var sms = {
-				sender : phonenumber,
+				to : $scope.smsTo,
+				sender : $scope.smsFrom,
 				text : text
 			}
 
@@ -29,6 +24,13 @@ angular.module('sms').controller('defaultController', [
 			})
 			$scope.smsText = ""	
 		}
+
+		fetchSms = function() {
+			smsService.fetchSms($scope.smsFrom, smsServer, $scope.smsList, function() {
+				$ionicScrollDelegate.scrollBottom(true)
+			})	
+		}
+		$interval(fetchSms, 2000)
 
 		$scope.sendSms = sendSms
 	}
@@ -43,22 +45,24 @@ angular.module('sms').controller('defaultController', [
  */
 .factory('mockSmsServer', [ '$timeout',
 
-  function($timeout) {
-    return {
-      sendSms : function(sms, responseCB) {
+  	function($timeout) {
+	  	var queue = []
+	    return {
+			sendSms : function(sms, responseCB) {
+				queue.push({
+			  		sender : "Service",
+			  		text : "This is a reply from the mock server",
+			  		datetime : new Date().getTime()
+				})
+			},
 
-        var response = {
-          sender : "Service",
-          text : "This is a reply from the mock server",
-          datetime : new Date().getTime()
-        }
-
-        $timeout(function() {
-          responseCB(response)
-        }, Math.floor(Math.random() * 4000) + 500)
-      }
-    }
-  }
+			fetchSms : function(id, responseCB) {
+				if(queue.length > 0) {
+					responseCB(queue.shift())
+				}
+			}
+	    }
+  	}
 ])
 
 .factory('httpSmsServer', ['$http', 
@@ -66,11 +70,19 @@ angular.module('sms').controller('defaultController', [
 	function($http){
 		return {
 			sendSms : function(sms, responseCB) {
-		      	$http.post('http://localhost:5000/' + sms.sender, sms).success(function(data, status, headers, config) {
-					responseCB(data)
-				}).error(function(data, status, headers, config) {
+		      	$http.post('http://localhost:5000/' + sms.to, sms)
+		      	.error(function(data, status, headers, config) {
 				    console.log(data)
 				});
+		    },
+
+		    fetchSms : function(id, responseCB) {
+		      	$http.get('http://localhost:5000/' + id)
+		      	.success(function(data) {
+		      		if(data) {
+		      			responseCB(data)
+		      		}
+		      	})
 		    }
 	    }
 	}

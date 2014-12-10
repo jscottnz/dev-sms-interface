@@ -26,15 +26,17 @@
 
     <ion-pane ng-controller="defaultController">
       <ion-header-bar class="bar-stable">
-        <h1 class="title">{{ setup.appTitle }}</h1>
+        <label class="item-input-wrapper">
+          <input placeholder="Enter your number" ng-model="smsFrom"/>
+        </label>
       </ion-header-bar>
       <ion-content>
         <div class="card">
           <div class="item item-divider">
-            {{ setup.serviceDescriptionTitle }}
+            How to use the SMS simulator
           </div>
           <div class="item item-text-wrap">
-            {{ setup.serviceDescriptionBody }}
+            Enter you phone number or name above. Enter in the sms below
           </div>  
         </div>
 
@@ -50,6 +52,9 @@
       </ion-content>
 
       <ion-footer-bar class="bar-stable">
+        <label class="item-input-wrapper">
+          <input placeholder="To" ng-model="smsTo"/>
+        </label>
         <label class="item-input-wrapper">
           <textarea placeholder="SMS" ng-model="smsText"></textarea>
         </label>

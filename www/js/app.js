@@ -23,11 +23,14 @@ angular.module('sms', ['ionic'])
         sms.datetime = new Date().getTime()
         smsList.push(sms)
         notifyUpdateCB()
-        smsServer.sendSms(sms, function(response) {
+        smsServer.sendSms(sms)
+      },
+
+      fetchSms : function(id, smsServer, smsList, notifyUpdateCB) {
+        smsServer.fetchSms(id, function(response) {
           smsList.push(response)
           notifyUpdateCB()
         })
-
       }
     }
   }
